@@ -11,11 +11,11 @@ public class Spin : MonoBehaviour
     {
         if (Input.GetKey(KeyCode.Q)) 
         {
-            transform.Rotate(Vector3.up, spinSpeed * Time.deltaTime);
+            transform.Rotate(Vector3.up, -spinSpeed * Time.deltaTime);
         }
         else if(Input.GetKey(KeyCode.E))
         {
-            transform.Rotate(Vector3.up, -spinSpeed * Time.deltaTime);
+            transform.Rotate(Vector3.up, spinSpeed * Time.deltaTime);
         }
     }
 }
