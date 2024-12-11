@@ -3,23 +3,25 @@ using UnityEngine;
 public class EnemyPlane : MonoBehaviour
 {
     public float speed = 10f; // Plane movement speed
+    public float rotationSpeed = 5f; // Speed at which the plane rotates
     public GameObject bombPrefab; // Prefab for bombs
     public Transform bombDropPoint; // Drop point for bombs
     public float bombDropInterval = 2f; // Time between bomb drops
     private float dropTimer;
 
     private Transform player; // Reference to the player
-    private Vector3 targetPosition; // Where the plane is flying
+    private Vector3 flyOverTarget; // Target position above the player
     private bool hasAttacked = false; // Track if the plane has attacked
+    private bool exiting = false; // Whether the plane is exiting the scene
 
     void Start()
     {
         player = GameObject.FindWithTag("Player").transform;
 
-        // Set an initial target near the player
         if (player != null)
         {
-            targetPosition = GetRandomPositionNearPlayer();
+            // Set an initial target position above the player
+            flyOverTarget = GetPositionAbovePlayer();
         }
         else
         {
@@ -29,17 +31,24 @@ public class EnemyPlane : MonoBehaviour
 
     void Update()
     {
-        // Move toward the target position
-        transform.position = Vector3.MoveTowards(transform.position, targetPosition, speed * Time.deltaTime);
-
-        // Check if the plane has reached the target position
-        if (!hasAttacked && Vector3.Distance(transform.position, targetPosition) < 1f)
+        if (!exiting)
         {
-            hasAttacked = true;
-            StartCoroutine(AttackAndExit());
+            // Rotate to face the target position
+            Vector3 directionToTarget = flyOverTarget - transform.position;
+            Quaternion targetRotation = Quaternion.LookRotation(directionToTarget);
+            transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, rotationSpeed * Time.deltaTime);
         }
 
-        // Bomb dropping logic during the attack phase
+        // Move forward in the current facing direction
+        transform.Translate(Vector3.forward * speed * Time.deltaTime);
+
+        // Bomb dropping logic
+        if (!hasAttacked && Vector3.Distance(transform.position, flyOverTarget) < 1f)
+        {
+            hasAttacked = true;
+            StartCoroutine(FlyOff());
+        }
+
         if (!hasAttacked)
         {
             dropTimer += Time.deltaTime;
@@ -59,21 +68,18 @@ public class EnemyPlane : MonoBehaviour
         }
     }
 
-    Vector3 GetRandomPositionNearPlayer()
+    Vector3 GetPositionAbovePlayer()
     {
-        float range = 5f; // How far from the player the plane should aim
-        Vector3 offset = new Vector3(Random.Range(-range, range), 0, Random.Range(-range, range));
-        return player.position + offset;
+        float heightAbovePlayer = 20f; // Height above the player
+        return new Vector3(player.position.x, player.position.y + heightAbovePlayer, player.position.z);
     }
 
-    System.Collections.IEnumerator AttackAndExit()
+    System.Collections.IEnumerator FlyOff()
     {
-        // Simulate attacking phase
-        yield return new WaitForSeconds(3f); // Attack duration
+        // Wait for a short period before exiting
+        yield return new WaitForSeconds(2f);
 
-        // Set a new target to fly off the map
-        targetPosition = new Vector3(transform.position.x, transform.position.y, transform.position.z + 50f);
+        // Set the plane to exiting mode, so it keeps moving in the current direction
+        exiting = true;
     }
 }
-
-
