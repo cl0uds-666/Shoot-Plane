@@ -1,0 +1,64 @@
+using UnityEngine;
+
+public class Bomb : MonoBehaviour
+{
+    [SerializeField] private float explosionRadius = 5f; // Radius of the explosion
+    [SerializeField] private float explosionForce = 500f; // Force applied by the explosion
+    [SerializeField] private int maxDamage = 50; // Maximum damage dealt to the player
+    [SerializeField] private GameObject explosionEffect; // Explosion VFX prefab
+
+    private bool hasExploded = false;
+
+    void OnCollisionEnter(Collision collision)
+    {
+        // Prevent multiple explosions
+        if (hasExploded) return;
+        hasExploded = true;
+
+        // Trigger the explosion
+        Explode();
+    }
+
+    void Explode()
+    {
+        // Instantiate explosion effect
+        if (explosionEffect != null)
+        {
+            Instantiate(explosionEffect, transform.position, Quaternion.identity);
+        }
+
+        // Check for objects in the explosion radius
+        Collider[] colliders = Physics.OverlapSphere(transform.position, explosionRadius);
+
+        foreach (Collider nearbyObject in colliders)
+        {
+            // Apply explosion force if the object has a Rigidbody
+            Rigidbody rb = nearbyObject.GetComponent<Rigidbody>();
+            if (rb != null)
+            {
+                rb.AddExplosionForce(explosionForce, transform.position, explosionRadius);
+            }
+
+            // Check if the object is the player
+            PlayerHealth player = nearbyObject.GetComponent<PlayerHealth>();
+            if (player != null)
+            {
+                // Calculate damage based on distance
+                float distance = Vector3.Distance(transform.position, player.transform.position);
+                float damageFactor = Mathf.Clamp01(1 - (distance / explosionRadius));
+                int damage = Mathf.RoundToInt(maxDamage * damageFactor);
+                player.TakeDamage(damage);
+            }
+        }
+
+        // Destroy the bomb after exploding
+        Destroy(gameObject);
+    }
+
+    void OnDrawGizmosSelected()
+    {
+        // Visualize the explosion radius in the Scene view
+        Gizmos.color = Color.red;
+        Gizmos.DrawWireSphere(transform.position, explosionRadius);
+    }
+}

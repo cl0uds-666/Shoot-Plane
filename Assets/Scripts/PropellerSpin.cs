@@ -4,12 +4,12 @@ using UnityEngine;
 
 public class PropellerSpin : MonoBehaviour
 {
-    public float spinSpeed = 360.0f;  // Speed of the propeller rotation (degrees per second)
+    [SerializeField] private float spinSpeed = 90.0f; // Speed of the propeller rotation
 
     // Update is called once per frame
     void Update()
     {
-        // Rotate the propeller around its forward axis (Z-axis) continuously
+        // Rotate the propeller around its Z-axis continuously
         transform.Rotate(Vector3.forward, spinSpeed * Time.deltaTime);
     }
 }

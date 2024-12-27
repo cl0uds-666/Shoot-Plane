@@ -2,17 +2,18 @@ using UnityEngine;
 
 public class EnemyPlane : MonoBehaviour
 {
-    public float speed = 10f; // Plane movement speed
-    public float rotationSpeed = 5f; // Speed at which the plane rotates
-    public GameObject bombPrefab; // Prefab for bombs
-    public Transform bombDropPoint; // Drop point for bombs
-    public float bombDropInterval = 2f; // Time between bomb drops
-    private float dropTimer;
+    [SerializeField] private float speed = 10f; // Plane movement speed
+    [SerializeField] private float rotationSpeed = 5f; // Speed at which the plane rotates
+    [SerializeField] private GameObject bombPrefab; // Prefab for bombs
+    [SerializeField] private Transform bombDropPoint; // Drop point for bombs
+    [SerializeField] private float bombDropInterval = 2f; // Time between bomb drops
 
+    private float dropTimer;
     private Transform player; // Reference to the player
     private Vector3 flyOverTarget; // Target position above the player
-    private bool hasAttacked = false; // Track if the plane has attacked
+    private bool hasDroppedInitialBomb = false; // Track if the plane has dropped its mandatory bomb
     private bool exiting = false; // Whether the plane is exiting the scene
+    private Quaternion exitRotation; // Smoothed-out exit direction
 
     void Start()
     {
@@ -20,7 +21,6 @@ public class EnemyPlane : MonoBehaviour
 
         if (player != null)
         {
-            // Set an initial target position above the player
             flyOverTarget = GetPositionAbovePlayer();
         }
         else
@@ -37,19 +37,32 @@ public class EnemyPlane : MonoBehaviour
             Vector3 directionToTarget = flyOverTarget - transform.position;
             Quaternion targetRotation = Quaternion.LookRotation(directionToTarget);
             transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, rotationSpeed * Time.deltaTime);
+
+            // Check if it's time to drop bombs
+            HandleBombDropping();
+        }
+        else
+        {
+            // Smoothly level off the plane during exit
+            transform.rotation = Quaternion.Slerp(transform.rotation, exitRotation, rotationSpeed * Time.deltaTime);
         }
 
         // Move forward in the current facing direction
         transform.Translate(Vector3.forward * speed * Time.deltaTime);
+    }
 
-        // Bomb dropping logic
-        if (!hasAttacked && Vector3.Distance(transform.position, flyOverTarget) < 1f)
+    void HandleBombDropping()
+    {
+        // Ensure at least one bomb is dropped when reaching the target
+        if (!hasDroppedInitialBomb && Vector3.Distance(transform.position, flyOverTarget) < 1f)
         {
-            hasAttacked = true;
+            DropBomb();
+            hasDroppedInitialBomb = true;
             StartCoroutine(FlyOff());
         }
 
-        if (!hasAttacked)
+        // Continue dropping bombs at intervals
+        if (hasDroppedInitialBomb)
         {
             dropTimer += Time.deltaTime;
             if (dropTimer >= bombDropInterval)
@@ -76,10 +89,14 @@ public class EnemyPlane : MonoBehaviour
 
     System.Collections.IEnumerator FlyOff()
     {
-        // Wait for a short period before exiting
-        yield return new WaitForSeconds(2f);
+        // Adjust the exit direction to level off
+        Vector3 forwardDirection = transform.forward;
+        forwardDirection.y = 0; // Remove any vertical pitch
+        exitRotation = Quaternion.LookRotation(forwardDirection);
 
-        // Set the plane to exiting mode, so it keeps moving in the current direction
+        // Set exiting mode to true
         exiting = true;
+
+        yield break; // End coroutine
     }
 }

@@ -2,9 +2,9 @@ using UnityEngine;
 
 public class PlaneSpawner : MonoBehaviour
 {
-    public GameObject planePrefab; // Enemy plane prefab
-    public Transform[] spawnPoints; // Spawn points around the map
-    public float spawnInterval = 5f; // Time between spawns
+    [SerializeField] private GameObject planePrefab;
+    [SerializeField] private Transform[] spawnPoints;
+    [SerializeField] private float spawnInterval = 5f;
 
     void Start()
     {

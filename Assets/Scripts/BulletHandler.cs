@@ -4,8 +4,8 @@ using UnityEngine;
 
 public class BulletHandler : MonoBehaviour
 {
-    public float launchSpeed = 75.0f;
-    public GameObject objectPrefab;
+    [SerializeField] private float launchSpeed = 75.0f;
+    [SerializeField] private GameObject objectPrefab;
 
     void Update()
     {

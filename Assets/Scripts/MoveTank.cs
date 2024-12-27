@@ -2,14 +2,14 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Move_Tank : MonoBehaviour
+public class MoveTank : MonoBehaviour
 {
-    public float moveSpeed = 5.0f;
-    public float rotateSpeed = 120.0f;
-    public GameObject[] leftWheels;
-    public GameObject[] rightWheels;
 
-    public float wheelRotateSpeed = 200.0f;
+    [SerializeField] private float moveSpeed = 5.0f;
+    [SerializeField] private float rotateSpeed = 120.0f;
+    [SerializeField] private GameObject[] leftWheels;
+    [SerializeField] private GameObject[] rightWheels;
+    [SerializeField] private float wheelRotateSpeed = 200.0f;
 
     private Rigidbody rb;
     private float moveInput;
