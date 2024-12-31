@@ -1,4 +1,5 @@
 using UnityEngine;
+using EZCameraShake;
 
 public class Bomb : MonoBehaviour
 {
@@ -43,6 +44,8 @@ public class Bomb : MonoBehaviour
             PlayerHealth player = nearbyObject.GetComponent<PlayerHealth>();
             if (player != null)
             {
+                CameraShaker.Instance.ShakeOnce(4f, 4f, .1f, 1f);
+
                 // Calculate damage based on distance
                 float distance = Vector3.Distance(transform.position, player.transform.position);
                 float damageFactor = Mathf.Clamp01(1 - (distance / explosionRadius));

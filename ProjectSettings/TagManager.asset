@@ -6,14 +6,15 @@ TagManager:
   tags:
   - Enemy
   - Ground
+  - Minimap
   layers:
   - Default
   - TransparentFX
   - Ignore Raycast
-  - 
+  - Minimap
   - Water
   - UI
-  - 
+  - Ground
   - 
   - 
   - 
