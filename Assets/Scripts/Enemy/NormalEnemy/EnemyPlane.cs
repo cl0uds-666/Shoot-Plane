@@ -7,6 +7,7 @@ public class EnemyPlane : MonoBehaviour
     [SerializeField] private GameObject bombPrefab; // Prefab for bombs
     [SerializeField] private Transform bombDropPoint; // Drop point for bombs
     [SerializeField] private float bombDropInterval = 2f; // Time between bomb drops
+    [SerializeField] private float lifeTime = 20f; // Time before the plane gets destroyed
 
     private float dropTimer;
     private Transform player; // Reference to the player
@@ -27,6 +28,8 @@ public class EnemyPlane : MonoBehaviour
         {
             Debug.LogWarning("Player not found!");
         }
+
+        Destroy(gameObject, lifeTime);
     }
 
     void Update()

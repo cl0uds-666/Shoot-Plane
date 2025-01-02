@@ -8,12 +8,14 @@ public class CargoPlane : MonoBehaviour
     [SerializeField] private Transform[] bombDropPoints; // Positions where bombs are dropped
     [SerializeField] private float bombDropInterval = 0.5f; // Time between bomb drops
     [SerializeField] private GameObject explosionEffect; // Explosion VFX prefab
+    [SerializeField] private float lifeTime = 20f; // Time before the plane is destroyed
     private int currentHealth;
 
     private void Start()
     {
         currentHealth = maxHealth;
         InvokeRepeating(nameof(DropBombs), 1f, bombDropInterval);
+        Destroy(gameObject, lifeTime);
     }
 
     private void Update()
