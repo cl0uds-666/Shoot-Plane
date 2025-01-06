@@ -2,29 +2,41 @@ using UnityEngine;
 
 public class GameManager : MonoBehaviour
 {
+    private bool isCursorUnlocked = false; // Track whether the cursor is unlocked
+
     void Start()
     {
         // Lock the cursor to the game window and make it invisible
-        Cursor.lockState = CursorLockMode.Locked;
-        Cursor.visible = false;
+        LockCursor();
     }
 
     void Update()
     {
-        // Ensure the cursor stays locked if the game is active
-        if (Cursor.lockState != CursorLockMode.Locked && Cursor.visible == false)
-        {
-            Cursor.lockState = CursorLockMode.Locked;
-        }
-
-        // Handle Escape key to unlock and toggle the game
+        // Toggle cursor lock/unlock with the Escape key
         if (Input.GetKeyDown(KeyCode.Escape))
         {
-#if UNITY_EDITOR
-        UnityEditor.EditorApplication.isPlaying = false; // Stops the play mode in the editor
-#else
-            Application.Quit(); // Closes the game
-#endif
+            if (isCursorUnlocked)
+            {
+                LockCursor();
+            }
+            else
+            {
+                UnlockCursor();
+            }
         }
+    }
+
+    private void LockCursor()
+    {
+        Cursor.lockState = CursorLockMode.Locked;
+        Cursor.visible = false;
+        isCursorUnlocked = false;
+    }
+
+    private void UnlockCursor()
+    {
+        Cursor.lockState = CursorLockMode.None;
+        Cursor.visible = true;
+        isCursorUnlocked = true;
     }
 }

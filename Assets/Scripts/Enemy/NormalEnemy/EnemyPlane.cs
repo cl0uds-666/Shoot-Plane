@@ -2,81 +2,81 @@ using UnityEngine;
 
 public class EnemyPlane : MonoBehaviour
 {
-    [SerializeField] private float speed = 10f; // Plane movement speed
-    [SerializeField] private float rotationSpeed = 5f; // Speed at which the plane rotates
+    [Header("General Settings")]
+    [SerializeField] private float speed = 10f; // Movement speed
+    [SerializeField] private float rotationSpeed = 2f; // Speed at which the plane rotates
     [SerializeField] private GameObject bombPrefab; // Prefab for bombs
     [SerializeField] private Transform bombDropPoint; // Drop point for bombs
     [SerializeField] private float bombDropInterval = 2f; // Time between bomb drops
-    [SerializeField] private float lifeTime = 20f; // Time before the plane gets destroyed
+    [SerializeField] private int maxAttackCycles = 3; // Number of times the plane can attack before leaving permanently
+    [SerializeField] private float loopDelay = 2f; // Time to wait before turning around
+    [SerializeField] private float ascentSpeed = 5f; // Speed of ascent
+    [SerializeField] private float noseUpAngle = 15f; // Angle for nose-up during ascent
 
-    private float dropTimer;
     private Transform player; // Reference to the player
     private Vector3 flyOverTarget; // Target position above the player
-    private bool hasDroppedInitialBomb = false; // Track if the plane has dropped its mandatory bomb
-    private bool exiting = false; // Whether the plane is exiting the scene
-    private Quaternion exitRotation; // Smoothed-out exit direction
+    private int attackCyclesCompleted = 0; // Counter for attack cycles
+    private bool isReturning = false; // Whether the plane is returning to attack again
+    private bool isAscending = false; // Whether the plane is ascending to Y=46
+    private Quaternion returnRotation; // Rotation for returning to attack
+    private bool isExiting = false; // Whether the plane is exiting permanently
+    private float dropTimer;
 
     void Start()
     {
-        player = GameObject.FindWithTag("Player").transform;
-
-        if (player != null)
-        {
-            flyOverTarget = GetPositionAbovePlayer();
-        }
-        else
-        {
-            Debug.LogWarning("Player not found!");
-        }
-
-        Destroy(gameObject, lifeTime);
+        player = GameObject.FindWithTag("Player")?.transform;
+        UpdateFlyOverTarget(); // Initialize the first target
     }
 
     void Update()
     {
-        if (!exiting)
+        if (isExiting) return; // If the plane is exiting, stop processing further
+
+        if (isAscending)
         {
-            // Rotate to face the target position
+            HandleAscending();
+        }
+        else if (!isReturning)
+        {
+            // Attack behavior
+            UpdateFlyOverTarget(); // Update the target dynamically
             Vector3 directionToTarget = flyOverTarget - transform.position;
             Quaternion targetRotation = Quaternion.LookRotation(directionToTarget);
             transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, rotationSpeed * Time.deltaTime);
 
-            // Check if it's time to drop bombs
             HandleBombDropping();
         }
         else
         {
-            // Smoothly level off the plane during exit
-            transform.rotation = Quaternion.Slerp(transform.rotation, exitRotation, rotationSpeed * Time.deltaTime);
+            // Returning behavior
+            transform.rotation = Quaternion.Slerp(transform.rotation, returnRotation, rotationSpeed * Time.deltaTime);
         }
 
-        // Move forward in the current facing direction
-        transform.Translate(Vector3.forward * speed * Time.deltaTime);
+        // Move forward in the current direction
+        if (!isAscending)
+        {
+            transform.Translate(Vector3.forward * speed * Time.deltaTime);
+        }
     }
 
-    void HandleBombDropping()
+    private void HandleBombDropping()
     {
-        // Ensure at least one bomb is dropped when reaching the target
-        if (!hasDroppedInitialBomb && Vector3.Distance(transform.position, flyOverTarget) < 1f)
+        if (Vector3.Distance(transform.position, flyOverTarget) < 1f)
         {
             DropBomb();
-            hasDroppedInitialBomb = true;
-            StartCoroutine(FlyOff());
-        }
-
-        // Continue dropping bombs at intervals
-        if (hasDroppedInitialBomb)
-        {
-            dropTimer += Time.deltaTime;
-            if (dropTimer >= bombDropInterval)
+            if (attackCyclesCompleted < maxAttackCycles)
             {
-                DropBomb();
-                dropTimer = 0f;
+                attackCyclesCompleted++;
+                isAscending = true; // Start ascending after the bomb drop
+            }
+            else
+            {
+                ExitScene();
             }
         }
     }
 
-    void DropBomb()
+    private void DropBomb()
     {
         if (bombPrefab != null && bombDropPoint != null)
         {
@@ -84,22 +84,56 @@ public class EnemyPlane : MonoBehaviour
         }
     }
 
-    Vector3 GetPositionAbovePlayer()
+    private void UpdateFlyOverTarget()
     {
-        float heightAbovePlayer = 20f; // Height above the player
-        return new Vector3(player.position.x, player.position.y + heightAbovePlayer, player.position.z);
+        if (player != null)
+        {
+            float heightAbovePlayer = 20f;
+            flyOverTarget = new Vector3(player.position.x, player.position.y + heightAbovePlayer, player.position.z);
+        }
     }
 
-    System.Collections.IEnumerator FlyOff()
+    private void HandleAscending()
     {
-        // Adjust the exit direction to level off
+        // Gradually ascend to Y=46 while moving forward
+        Vector3 ascentTarget = transform.position + transform.forward * speed * Time.deltaTime;
+        ascentTarget.y = Mathf.MoveTowards(transform.position.y, 46f, ascentSpeed * Time.deltaTime);
+
+        transform.position = ascentTarget;
+
+        // Adjust the plane's pitch for a nose-up orientation
         Vector3 forwardDirection = transform.forward;
-        forwardDirection.y = 0; // Remove any vertical pitch
-        exitRotation = Quaternion.LookRotation(forwardDirection);
+        forwardDirection.y = 0.3f; // Slight upward tilt
+        Quaternion noseUpRotation = Quaternion.LookRotation(forwardDirection.normalized);
+        transform.rotation = Quaternion.Slerp(transform.rotation, noseUpRotation, rotationSpeed * Time.deltaTime);
 
-        // Set exiting mode to true
-        exiting = true;
+        // Check if the plane has reached the desired height
+        if (Mathf.Abs(transform.position.y - 46f) < 0.1f)
+        {
+            isAscending = false; // Stop ascending
+            StartCoroutine(ReturnToAttack());
+        }
+    }
 
-        yield break; // End coroutine
+    private System.Collections.IEnumerator ReturnToAttack()
+    {
+        isReturning = true;
+        yield return new WaitForSeconds(loopDelay);
+
+        if (player != null)
+        {
+            UpdateFlyOverTarget(); // Ensure the target is updated
+            returnRotation = Quaternion.LookRotation(flyOverTarget - transform.position);
+        }
+        isReturning = false;
+    }
+
+    private void ExitScene()
+    {
+        isExiting = true;
+
+        Vector3 forwardDirection = transform.forward;
+        forwardDirection.y = 0;
+        returnRotation = Quaternion.LookRotation(forwardDirection);
     }
 }

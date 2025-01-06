@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.UI;
 
 public class FighterJet : MonoBehaviour
 {
@@ -14,13 +15,30 @@ public class FighterJet : MonoBehaviour
     [SerializeField] private Vector3 upperHeight = new Vector3(93.25f, 46.39f, 64.72f); // Level-off height
     [SerializeField] private float pullUpSpeed = 20f; // Speed during pull-up
     [SerializeField] private float lifeTime = 20f; // Time before the jet is destroyed
+    [SerializeField] private Slider healthBar; // Health bar slider
+    [SerializeField] private Image fillImage; // Image component of the health bar fill area
 
+    private int currentHealth;
     private float fireTimer; // Timer to track firing intervals
     private bool pullingUp = false; // Track if the jet is pulling up
     private bool hasPulledUp = false; // Track if the jet has reached the lower height and is eligible to level off
 
     private void Start()
     {
+        // Initialize health
+        currentHealth = maxHealth;
+
+        // Set up health bar
+        if (healthBar != null)
+        {
+            healthBar.maxValue = maxHealth;
+            healthBar.value = currentHealth;
+            if (fillImage != null)
+            {
+                fillImage.color = Color.green; // Start with green
+            }
+        }
+
         // Find the player in the scene if not already assigned
         if (playerTransform == null)
         {
@@ -34,7 +52,9 @@ public class FighterJet : MonoBehaviour
                 Debug.LogWarning("Player not found!");
             }
         }
-        Destroy(gameObject, lifeTime); // Destroy the jet after a certain time (if not already destroyed)
+
+        // Auto-destroy the jet after a certain lifetime
+        Destroy(gameObject, lifeTime);
     }
 
     private void Update()
@@ -95,16 +115,12 @@ public class FighterJet : MonoBehaviour
 
     private void PullUp()
     {
-        // Adjust the direction to pull up
         Vector3 upwardDirection = transform.forward + Vector3.up * 0.5f;
         upwardDirection.Normalize();
         Quaternion pullUpRotation = Quaternion.LookRotation(upwardDirection);
         transform.rotation = Quaternion.Slerp(transform.rotation, pullUpRotation, rotationSpeed * Time.deltaTime);
-
-        // Move forward while pulling up
         transform.Translate(Vector3.forward * pullUpSpeed * Time.deltaTime);
 
-        // Check if it has reached the upper height
         if (transform.position.y >= upperHeight.y)
         {
             hasPulledUp = true;
@@ -113,35 +129,71 @@ public class FighterJet : MonoBehaviour
 
     private void LevelOff()
     {
-        // Smoothly level off and stop climbing
         Vector3 forwardDirection = transform.forward;
-        forwardDirection.y = 0; // Remove any upward pitch
+        forwardDirection.y = 0;
         Quaternion levelOffRotation = Quaternion.LookRotation(forwardDirection);
         transform.rotation = Quaternion.Slerp(transform.rotation, levelOffRotation, rotationSpeed * Time.deltaTime);
-
-        // Move forward at normal speed
         transform.Translate(Vector3.forward * speed * Time.deltaTime);
     }
 
     public void TakeDamage(int damage)
     {
-        maxHealth -= damage;
+        currentHealth -= damage;
 
-        if (maxHealth <= 0)
+        if (healthBar != null)
+        {
+            healthBar.value = currentHealth;
+            UpdateHealthBarColor();
+        }
+
+        if (currentHealth <= 0)
         {
             Die();
         }
     }
 
+    private void UpdateHealthBarColor()
+    {
+        if (fillImage != null)
+        {
+            float healthPercentage = (float)currentHealth / maxHealth;
+
+            if (healthPercentage > 0.5f)
+            {
+                fillImage.color = Color.green;
+            }
+            else if (healthPercentage > 0.2f)
+            {
+                fillImage.color = Color.yellow;
+            }
+            else
+            {
+                fillImage.color = Color.red;
+            }
+        }
+    }
+
     private void Die()
     {
-        // Trigger explosion effect
         if (explosionEffect != null)
         {
             Instantiate(explosionEffect, transform.position, Quaternion.identity);
         }
 
-        // Destroy the fighter jet
-        Destroy(gameObject);
+        // Enable gravity
+        Rigidbody rb = GetComponent<Rigidbody>();
+        if (rb != null)
+        {
+            rb.isKinematic = false; // Disable kinematic to allow physics
+            rb.useGravity = true;   // Enable gravity
+        }
+
+        if (healthBar != null)
+        {
+            Destroy(healthBar.gameObject);
+        }
+
+        Destroy(gameObject, 5f); // Destroy the plane after 5 seconds
     }
+
 }

@@ -2,9 +2,8 @@ using UnityEngine;
 
 public class Bullet : MonoBehaviour
 {
-    [SerializeField] private int damage = 20; // Damage dealt by the bullet
+    [SerializeField] private int damage = 10; // Damage dealt by the bullet
     [SerializeField] private float lifetime = 5f; // Time before the bullet is destroyed
-
 
     void Start()
     {
@@ -12,17 +11,36 @@ public class Bullet : MonoBehaviour
         Destroy(gameObject, lifetime);
     }
 
-    void OnCollisionEnter(Collision collision)
+    void OnTriggerEnter(Collider other)
     {
-        // Check if the bullet hit a plane
-        PlaneHealth planeHealth = collision.gameObject.GetComponent<PlaneHealth>();
+        // Check if the bullet hit an enemy with PlaneHealth
+        PlaneHealth planeHealth = other.GetComponent<PlaneHealth>();
         if (planeHealth != null)
         {
-            // Apply damage to the plane
             planeHealth.TakeDamage(damage);
+            Destroy(gameObject);
+            return;
         }
 
-        // Destroy the bullet on impact
+        // Check if the bullet hit a FighterJet
+        FighterJet fighterJet = other.GetComponent<FighterJet>();
+        if (fighterJet != null)
+        {
+            fighterJet.TakeDamage(damage);
+            Destroy(gameObject);
+            return;
+        }
+
+        // Check if the bullet hit a CargoPlane
+        CargoPlane cargoPlane = other.GetComponent<CargoPlane>();
+        if (cargoPlane != null)
+        {
+            cargoPlane.TakeDamage(damage);
+            Destroy(gameObject);
+            return;
+        }
+
+        // If no valid target was hit, destroy the bullet
         Destroy(gameObject);
     }
 }
