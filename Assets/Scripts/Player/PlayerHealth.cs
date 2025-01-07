@@ -47,4 +47,21 @@ public class PlayerHealth : MonoBehaviour
     {
         return maxHealth;
     }
+
+    public void IncreaseMaxHealth(int amount)
+    {
+        maxHealth += amount;
+        currentHealth = maxHealth; // Optionally refill health
+        Debug.Log($"Max Health Increased. New Max Health: {maxHealth}");
+        OnHealthChanged?.Invoke(currentHealth, maxHealth);
+    }
+
+    public void ResetHealth(int maxHealthValue)
+    {
+        maxHealth = maxHealthValue;
+        currentHealth = maxHealth;
+        OnHealthChanged?.Invoke(currentHealth, maxHealth);
+        Debug.Log($"Health reset. Max Health: {maxHealth}, Current Health: {currentHealth}");
+    }
+
 }

@@ -1,54 +1,123 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class BulletHandler : MonoBehaviour
 {
     [SerializeField] private float launchSpeed = 75.0f; // Speed at which the bullet is launched
-    [SerializeField] private GameObject objectPrefab; // Prefab for the bullet
-    [SerializeField] private float lifetime = 5f; // Time before the bullet is destroyed
+    [SerializeField] private GameObject bulletPrefab; // Prefab for the bullet
+    [SerializeField] private Transform firePoint; // Position where the bullet spawns
+    [SerializeField] private AudioClip fireSound; // Sound effect for firing
+    [SerializeField] private AudioSource audioSource; // AudioSource for playing sounds
+    [SerializeField] private float fireRate = 0.2f; // Time interval between individual shots in the burst
+    [SerializeField] private int bulletDamage = 10; // Damage dealt by bullets
+    [SerializeField] private float cooldownTime = 1f; // Cooldown time after burst ends
 
-    void Update()
+    private bool isFiring = false; // Is the player currently firing
+    private bool isCoolingDown = false; // Is the player in cooldown
+    private float nextFireTime = 0f; // Time for the next shot in the burst
+
+    private void Update()
     {
-        // Fire bullet when Mouse Button 1 (left mouse button) is pressed
-        if (Input.GetMouseButtonDown(0)) // 0 corresponds to the left mouse button
+        if (Input.GetMouseButtonDown(0) && !isCoolingDown) // Fire1 (Mouse Button 1)
         {
-            SpawnObject();
+            StartFiring();
+        }
+
+        if (isFiring && Time.time >= nextFireTime)
+        {
+            FireBullet();
+            nextFireTime = Time.time + fireRate;
         }
     }
 
-    void SpawnObject()
+    private void StartFiring()
     {
-        // Get the turret's current position
-        Vector3 spawnPosition = transform.position;
+        if (isFiring || isCoolingDown) return;
 
-        // Get the prefab's rotation (keeping X and Z)
-        Quaternion prefabRotation = objectPrefab.transform.rotation;
+        isFiring = true;
 
-        // Get the current Y rotation of the turret
-        float turretYRotation = transform.eulerAngles.y;
+        // Play the firing sound
+        if (audioSource != null && fireSound != null)
+        {
+            audioSource.clip = fireSound;
+            audioSource.loop = false;
+            audioSource.Play();
+        }
+        else
+        {
+            Debug.LogWarning("AudioSource or FireSound is not assigned!");
+        }
 
-        // Define the Y-axis correction factor (difference between 328 and 235 degrees)
-        float yRotationCorrection = 93.0f;
-
-        // Adjust the turret's Y rotation with the correction factor
-        float adjustedYRotation = turretYRotation - yRotationCorrection;
-
-        // Construct a new rotation that uses the adjusted Y rotation, and the prefab's X and Z rotation
-        Quaternion spawnRotation = Quaternion.Euler(prefabRotation.eulerAngles.x, adjustedYRotation, prefabRotation.eulerAngles.z);
-
-        // Calculate velocity in the forward direction of the turret
-        Vector3 fireDirection = transform.forward;
-        Vector3 velocity = fireDirection * launchSpeed;
-
-        // Instantiate the bullet with the new adjusted rotation
-        GameObject newBullet = Instantiate(objectPrefab, spawnPosition, spawnRotation);
-
-        // Apply velocity to the bullet's Rigidbody
-        Rigidbody rb = newBullet.GetComponent<Rigidbody>();
-        rb.velocity = velocity;
-
-        // Destroy the bullet after the set lifetime
-        Destroy(newBullet, lifetime);
+        // Schedule the end of the burst based on the sound length
+        Invoke(nameof(StopFiring), fireSound.length);
     }
+
+    private void FireBullet()
+    {
+        if (bulletPrefab == null || firePoint == null)
+        {
+            Debug.LogError("Bullet prefab or fire point is not assigned!");
+            return;
+        }
+
+        // Instantiate the bullet
+        GameObject bullet = Instantiate(bulletPrefab, firePoint.position, firePoint.rotation);
+
+        // Apply velocity to the bullet
+        Rigidbody rb = bullet.GetComponent<Rigidbody>();
+        if (rb != null)
+        {
+            rb.velocity = firePoint.forward * launchSpeed;
+        }
+    }
+
+    private void StopFiring()
+    {
+        isFiring = false;
+
+        // Start the cooldown
+        isCoolingDown = true;
+        Invoke(nameof(ResetCooldown), cooldownTime);
+        Debug.Log("Burst ended. Cooldown started.");
+    }
+
+    private void ResetCooldown()
+    {
+        isCoolingDown = false;
+        Debug.Log("Cooldown ended. Ready to fire again.");
+    }
+
+    public void IncreaseBulletDamage(int amount)
+    {
+        bulletDamage += amount;
+        Debug.Log($"Bullet Damage Increased. New Damage: {bulletDamage}");
+    }
+
+    public void DecreaseFireRate(float amount)
+    {
+        fireRate = Mathf.Max(0.05f, fireRate - amount); // Prevent fire rate from going too low
+        Debug.Log($"Fire Rate Decreased. New Fire Rate: {fireRate}");
+    }
+
+    public int GetBulletDamage()
+    {
+        return bulletDamage;
+    }
+
+    public float GetFireRate()
+    {
+        return fireRate;
+    }
+
+    public void ResetBulletDamage(int damage)
+    {
+        bulletDamage = damage;
+        Debug.Log($"Bullet damage reset. New damage: {bulletDamage}");
+    }
+
+    public void ResetFireRate(float rate)
+    {
+        fireRate = rate;
+        Debug.Log($"Fire rate reset. New rate: {fireRate}");
+    }
+
 }
