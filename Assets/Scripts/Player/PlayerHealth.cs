@@ -5,15 +5,26 @@ public class PlayerHealth : MonoBehaviour
     [SerializeField] private int maxHealth = 100;
     private int currentHealth;
 
+    // Event to notify UI or other systems about health changes
+    public delegate void HealthChanged(int currentHealth, int maxHealth);
+    public static event HealthChanged OnHealthChanged;
+
     void Start()
     {
         currentHealth = maxHealth;
+
+        // Notify listeners about the initial health state
+        OnHealthChanged?.Invoke(currentHealth, maxHealth);
     }
 
     public void TakeDamage(int damage)
     {
         currentHealth -= damage;
+        currentHealth = Mathf.Clamp(currentHealth, 0, maxHealth);
         Debug.Log($"Player took {damage} damage. Current health: {currentHealth}");
+
+        // Notify listeners about the health change
+        OnHealthChanged?.Invoke(currentHealth, maxHealth);
 
         if (currentHealth <= 0)
         {
@@ -24,11 +35,16 @@ public class PlayerHealth : MonoBehaviour
     private void Die()
     {
         Debug.Log("Player died!");
-        FindObjectOfType<GameManager>().PlayerDied(); // Notify the GameManager
+        FindObjectOfType<GameManager>().PlayerDied();
     }
 
-    public int GetHealth()
+    public int GetCurrentHealth()
     {
         return currentHealth;
+    }
+
+    public int GetMaxHealth()
+    {
+        return maxHealth;
     }
 }
