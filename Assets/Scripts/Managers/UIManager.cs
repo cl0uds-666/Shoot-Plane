@@ -3,19 +3,19 @@ using TMPro;
 
 public class UIManager : MonoBehaviour
 {
-    [SerializeField] private TextMeshProUGUI healthText; // Reference for the player's health text
-    [SerializeField] private TextMeshProUGUI coinText; // Reference for the player's coin text
+    [SerializeField] private TextMeshProUGUI healthText;
+    [SerializeField] private TextMeshProUGUI coinText;
 
     void OnEnable()
     {
         PlayerHealth.OnHealthChanged += UpdateHealthUI;
-        PlayerCurrency.OnCurrencyChanged += UpdateCoinUI;
+        CurrencyManager.OnCurrencyChanged += UpdateCoinUI; // Subscribe to the event
     }
 
     void OnDisable()
     {
         PlayerHealth.OnHealthChanged -= UpdateHealthUI;
-        PlayerCurrency.OnCurrencyChanged -= UpdateCoinUI;
+        CurrencyManager.OnCurrencyChanged -= UpdateCoinUI; // Unsubscribe from the event
     }
 
     public void UpdateHealthUI(int currentHealth, int maxHealth)

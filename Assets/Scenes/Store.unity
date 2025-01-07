@@ -1532,9 +1532,9 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 8268502771067855856, guid: 091b9052c0a3aeb4e994431e141a4d02, type: 3}
-        m_TargetAssemblyTypeName: PlayerCurrency, Assembly-CSharp
-        m_MethodName: AddTestCoins
+      - m_Target: {fileID: 1874879279}
+        m_TargetAssemblyTypeName: CurrencyManager, Assembly-CSharp
+        m_MethodName: AddCurrency
         m_Mode: 3
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -1616,7 +1616,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   playerHealth: {fileID: 5485736420029138271, guid: 091b9052c0a3aeb4e994431e141a4d02, type: 3}
   bulletHandler: {fileID: 0}
-  playerCurrency: {fileID: 8268502771067855856, guid: 091b9052c0a3aeb4e994431e141a4d02, type: 3}
   healthUpgradeCost: 50
   fireRateUpgradeCost: 75
   damageUpgradeCost: 100
@@ -2265,6 +2264,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1874879278}
   - component: {fileID: 1874879277}
+  - component: {fileID: 1874879279}
   m_Layer: 0
   m_Name: Reset
   m_TagString: Untagged
@@ -2306,6 +2306,18 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1874879279
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1874879276}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fc5d60e5248f4d84ba1cf0b120950c96, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &2034405909
 GameObject:
   m_ObjectHideFlags: 0

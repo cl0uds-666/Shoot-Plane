@@ -2,29 +2,22 @@ using UnityEngine;
 
 public class CoinScript : MonoBehaviour
 {
-    [SerializeField] private int coinValue = 1; // The value of the coin
+    [SerializeField] private int coinValue = 1;
 
     private void OnTriggerEnter(Collider other)
     {
-        Debug.Log($"{gameObject.name} triggered by: {other.name}");
-
-        if (other.CompareTag("Player")) // Check if the player collects the coin
+        if (other.CompareTag("Player"))
         {
-            if (PlayerCurrency.Instance != null)
+            if (CurrencyManager.Instance != null)
             {
-                Debug.Log($"Coin collected by player! Value: {coinValue}");
-                PlayerCurrency.Instance.AddCurrency(coinValue); // Add currency to the player
+                CurrencyManager.Instance.AddCurrency(coinValue);
+                Debug.Log($"Player collected coin! Value: {coinValue}");
             }
             else
             {
-                Debug.LogError("PlayerCurrency.Instance is null. Ensure PlayerCurrency is set up correctly.");
+                Debug.LogError("CurrencyManager instance is missing!");
             }
-
-            Destroy(gameObject); // Destroy the coin
-        }
-        else
-        {
-            Debug.Log($"{gameObject.name} triggered by non-player object: {other.tag}");
+            Destroy(gameObject);
         }
     }
 }
