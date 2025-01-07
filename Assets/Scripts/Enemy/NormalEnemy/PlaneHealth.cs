@@ -116,6 +116,17 @@ public class PlaneHealth : MonoBehaviour
         if (isDead) return;
         isDead = true;
 
+        // Increment kill count in GameManager
+        GameManager gameManager = FindObjectOfType<GameManager>();
+        if (gameManager != null)
+        {
+            gameManager.IncrementKillCount();
+        }
+        else
+        {
+            Debug.LogWarning("GameManager not found! Kill count will not be tracked.");
+        }
+
         // Enable gravity
         if (rb != null)
         {
@@ -146,6 +157,7 @@ public class PlaneHealth : MonoBehaviour
 
         Debug.Log("Plane destroyed! Falling with fire and smoke.");
     }
+
 
     private void DropCoins()
     {

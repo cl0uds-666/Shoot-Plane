@@ -96,6 +96,17 @@ public class CargoPlane : MonoBehaviour
 
     private void Die()
     {
+        // Notify GameManager of the kill
+        GameManager gameManager = FindObjectOfType<GameManager>();
+        if (gameManager != null)
+        {
+            gameManager.IncrementKillCount();
+        }
+        else
+        {
+            Debug.LogWarning("GameManager not found! Kill count will not be tracked.");
+        }
+
         // Trigger explosion effect
         if (explosionEffect != null)
         {
@@ -121,6 +132,7 @@ public class CargoPlane : MonoBehaviour
 
         Destroy(gameObject, 5f); // Destroy the plane after 5 seconds
     }
+
 
     private void DropCoins()
     {

@@ -288,26 +288,41 @@ public class FighterJet : MonoBehaviour
 
     private void Die()
     {
+        // Notify GameManager of the kill
+        GameManager gameManager = FindObjectOfType<GameManager>();
+        if (gameManager != null)
+        {
+            gameManager.IncrementKillCount();
+        }
+        else
+        {
+            Debug.LogWarning("GameManager not found! Kill count will not be tracked.");
+        }
+
+        // Trigger explosion effect
         if (explosionEffect != null)
         {
             Instantiate(explosionEffect, transform.position, Quaternion.identity);
         }
 
+        // Enable gravity
         Rigidbody rb = GetComponent<Rigidbody>();
         if (rb != null)
         {
-            rb.isKinematic = false;
-            rb.useGravity = true;
+            rb.isKinematic = false; // Disable kinematic to allow physics
+            rb.useGravity = true;   // Enable gravity
         }
 
+        // Drop coins
         DropCoins();
 
+        // Destroy the health bar
         if (healthBar != null)
         {
             Destroy(healthBar.gameObject);
         }
 
-        Destroy(gameObject, 5f);
+        Destroy(gameObject, 5f); // Destroy the jet after 5 seconds
     }
 
     private void DropCoins()
