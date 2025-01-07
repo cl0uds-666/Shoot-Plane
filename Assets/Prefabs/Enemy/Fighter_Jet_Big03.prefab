@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 8767653803037929500}
   - component: {fileID: 2255558043822175170}
   - component: {fileID: 4236805757745971830}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: missile04
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -94,7 +94,7 @@ GameObject:
   - component: {fileID: 9159497498027149405}
   - component: {fileID: 4454346493612704685}
   - component: {fileID: 4455126647297364947}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: missile02
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -166,6 +166,90 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
+--- !u!1 &5374473708097281636
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1706636199097576426}
+  - component: {fileID: 6756108214152204994}
+  m_Layer: 3
+  m_Name: Minimap_icon (2)
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1706636199097576426
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5374473708097281636}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0.50000083, y: 0.49999857, z: -0.50000316, w: 0.4999975}
+  m_LocalPosition: {x: -0.32, y: 5.41, z: -2.18}
+  m_LocalScale: {x: 39.866577, y: 39.86658, z: 1.328886}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 3210434834956954063}
+  m_LocalEulerAnglesHint: {x: 90, y: 0, z: 0}
+--- !u!212 &6756108214152204994
+SpriteRenderer:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5374473708097281636}
+  m_Enabled: 1
+  m_CastShadows: 0
+  m_ReceiveShadows: 0
+  m_DynamicOccludee: 1
+  m_StaticShadowCaster: 0
+  m_MotionVectors: 1
+  m_LightProbeUsage: 1
+  m_ReflectionProbeUsage: 1
+  m_RayTracingMode: 0
+  m_RayTraceProcedural: 0
+  m_RenderingLayerMask: 1
+  m_RendererPriority: 0
+  m_Materials:
+  - {fileID: 10754, guid: 0000000000000000f000000000000000, type: 0}
+  m_StaticBatchInfo:
+    firstSubMesh: 0
+    subMeshCount: 0
+  m_StaticBatchRoot: {fileID: 0}
+  m_ProbeAnchor: {fileID: 0}
+  m_LightProbeVolumeOverride: {fileID: 0}
+  m_ScaleInLightmap: 1
+  m_ReceiveGI: 1
+  m_PreserveUVs: 0
+  m_IgnoreNormalsForChartDetection: 0
+  m_ImportantGI: 0
+  m_StitchLightmapSeams: 1
+  m_SelectedEditorRenderState: 0
+  m_MinimumChartSize: 4
+  m_AutoUVMaxDistance: 0.5
+  m_AutoUVMaxAngle: 89
+  m_LightmapParameters: {fileID: 0}
+  m_SortingLayerID: 0
+  m_SortingLayer: 0
+  m_SortingOrder: 0
+  m_Sprite: {fileID: 10913, guid: 0000000000000000f000000000000000, type: 0}
+  m_Color: {r: 1, g: 0.05275347, b: 0, a: 1}
+  m_FlipX: 0
+  m_FlipY: 0
+  m_DrawMode: 0
+  m_Size: {x: 0.2, y: 0.2}
+  m_AdaptiveModeThreshold: 0.5
+  m_SpriteTileMode: 0
+  m_WasSpriteAssigned: 1
+  m_MaskInteraction: 0
+  m_SpriteSortPoint: 0
 --- !u!1 &6935100604929834583
 GameObject:
   m_ObjectHideFlags: 0
@@ -177,7 +261,7 @@ GameObject:
   - component: {fileID: 5994377318817539540}
   - component: {fileID: 7097702460225442313}
   - component: {fileID: 1600219887393075477}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: missile01
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -258,7 +342,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 5429063084606347250}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: FirePoint
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -291,7 +375,7 @@ GameObject:
   - component: {fileID: 3729802763493056954}
   - component: {fileID: 226776867452128064}
   - component: {fileID: 2880664225240351341}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: missile03
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -377,9 +461,9 @@ GameObject:
   - component: {fileID: 305191560429715625}
   - component: {fileID: 7126620713341990678}
   - component: {fileID: 2736528178623470847}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: Fighter_Jet_Big03
-  m_TagString: Untagged
+  m_TagString: Enemy
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -394,7 +478,7 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 93.25, y: 89.5, z: -27.74}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalScale: {x: 0.75251, y: 0.75251, z: 0.75251}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 5994377318817539540}
@@ -403,6 +487,7 @@ Transform:
   - {fileID: 8767653803037929500}
   - {fileID: 5429063084606347250}
   - {fileID: 488404594902711240}
+  - {fileID: 1706636199097576426}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!33 &4739956784439919920
@@ -473,14 +558,17 @@ MonoBehaviour:
   gunPoint: {fileID: 5429063084606347250}
   fireRate: 0.1
   explosionEffect: {fileID: 0}
-  playerTransform: {fileID: 0}
   rotationSpeed: 2
-  lowerHeight: {x: 93.25, y: 12.39, z: 54.69}
-  upperHeight: {x: 93.25, y: 46.39, z: 64.72}
+  lowerHeight: {x: 93.25, y: 25, z: 54.69}
+  upperHeight: {x: 93.25, y: 80, z: 64.72}
   pullUpSpeed: 20
-  lifeTime: 20
+  loopDelay: 3
+  exitTime: 5
+  maxAttackCycles: 3
   healthBar: {fileID: 861278957180865652}
   fillImage: {fileID: 6155021088493157613}
+  coinPrefab: {fileID: 3074623547776351756, guid: 90d116f197d8fae42b301d819ef08926, type: 3}
+  numberOfCoins: 5
 --- !u!65 &7126620713341990678
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -494,7 +582,7 @@ BoxCollider:
     m_Bits: 0
   m_ExcludeLayers:
     serializedVersion: 2
-    m_Bits: 0
+    m_Bits: 192
   m_LayerOverridePriority: 0
   m_IsTrigger: 0
   m_ProvidesContacts: 0
@@ -665,9 +753,17 @@ PrefabInstance:
       propertyPath: m_TargetGraphic
       value: 
       objectReference: {fileID: 0}
+    - target: {fileID: 2646536983831998409, guid: 91a9f04d81b90e54ca0b52a9ff8c7361, type: 3}
+      propertyPath: m_Layer
+      value: 9
+      objectReference: {fileID: 0}
     - target: {fileID: 4359165046751058369, guid: 91a9f04d81b90e54ca0b52a9ff8c7361, type: 3}
       propertyPath: m_Name
       value: Canvas (1)
+      objectReference: {fileID: 0}
+    - target: {fileID: 4359165046751058369, guid: 91a9f04d81b90e54ca0b52a9ff8c7361, type: 3}
+      propertyPath: m_Layer
+      value: 9
       objectReference: {fileID: 0}
     - target: {fileID: 4712518218174605199, guid: 91a9f04d81b90e54ca0b52a9ff8c7361, type: 3}
       propertyPath: m_AnchorMax.x
@@ -677,9 +773,21 @@ PrefabInstance:
       propertyPath: m_AnchorMax.y
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 4796902490409721028, guid: 91a9f04d81b90e54ca0b52a9ff8c7361, type: 3}
+      propertyPath: m_Layer
+      value: 9
+      objectReference: {fileID: 0}
+    - target: {fileID: 5234941551512751260, guid: 91a9f04d81b90e54ca0b52a9ff8c7361, type: 3}
+      propertyPath: m_Layer
+      value: 9
+      objectReference: {fileID: 0}
     - target: {fileID: 5690382970352326706, guid: 91a9f04d81b90e54ca0b52a9ff8c7361, type: 3}
       propertyPath: m_IsActive
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5839504135214045844, guid: 91a9f04d81b90e54ca0b52a9ff8c7361, type: 3}
+      propertyPath: m_Layer
+      value: 9
       objectReference: {fileID: 0}
     - target: {fileID: 6937865990846920549, guid: 91a9f04d81b90e54ca0b52a9ff8c7361, type: 3}
       propertyPath: m_AnchorMin.y

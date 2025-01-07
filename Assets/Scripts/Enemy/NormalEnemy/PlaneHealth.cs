@@ -9,6 +9,9 @@ public class PlaneHealth : MonoBehaviour
     [SerializeField] private float destroyDelay = 5f; // Time before the plane is destroyed after death
     [SerializeField] private Slider healthBar; // Reference to the health bar slider
     [SerializeField] private Image fillImage; // Image component of the health bar fill area
+    [SerializeField] private GameObject coinPrefab; // Prefab for the coin
+    [SerializeField] private int numberOfCoins = 3; // Number of coins to drop
+    [SerializeField] private int coinValue = 1; // Value of each coin (optional for currency system)
 
     private int currentHealth;
     private Rigidbody rb; // Rigidbody of the plane
@@ -129,6 +132,9 @@ public class PlaneHealth : MonoBehaviour
             smokeEffect.SetActive(true);
         }
 
+        // Drop coins
+        DropCoins();
+
         // Destroy the health bar
         if (healthBar != null)
         {
@@ -139,5 +145,24 @@ public class PlaneHealth : MonoBehaviour
         Destroy(gameObject, destroyDelay);
 
         Debug.Log("Plane destroyed! Falling with fire and smoke.");
+    }
+
+    private void DropCoins()
+    {
+        if (coinPrefab == null) return;
+
+        for (int i = 0; i < numberOfCoins; i++)
+        {
+            // Randomize coin drop position slightly around the enemy's position
+            Vector3 dropPosition = transform.position + new Vector3(
+                Random.Range(-1f, 1f),
+                0.5f,
+                Random.Range(-1f, 1f)
+            );
+
+            Instantiate(coinPrefab, dropPosition, Quaternion.identity);
+        }
+
+        Debug.Log($"{numberOfCoins} coins dropped!");
     }
 }

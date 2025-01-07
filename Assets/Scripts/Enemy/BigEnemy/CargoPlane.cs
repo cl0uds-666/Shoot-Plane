@@ -12,6 +12,8 @@ public class CargoPlane : MonoBehaviour
     [SerializeField] private float lifeTime = 20f; // Time before the plane is destroyed
     [SerializeField] private Slider healthBar; // Health bar slider
     [SerializeField] private Image fillImage; // Image component of the health bar fill area
+    [SerializeField] private GameObject coinPrefab; // Prefab for the coin
+    [SerializeField] private int numberOfCoins = 10; // Number of coins to drop
 
     private int currentHealth;
 
@@ -108,6 +110,9 @@ public class CargoPlane : MonoBehaviour
             rb.useGravity = true;   // Enable gravity
         }
 
+        // Drop coins
+        DropCoins();
+
         // Destroy the health bar
         if (healthBar != null)
         {
@@ -117,4 +122,22 @@ public class CargoPlane : MonoBehaviour
         Destroy(gameObject, 5f); // Destroy the plane after 5 seconds
     }
 
+    private void DropCoins()
+    {
+        if (coinPrefab == null) return;
+
+        for (int i = 0; i < numberOfCoins; i++)
+        {
+            // Randomize coin drop position slightly around the enemy's position
+            Vector3 dropPosition = transform.position + new Vector3(
+                Random.Range(-1f, 1f),
+                0.5f,
+                Random.Range(-1f, 1f)
+            );
+
+            Instantiate(coinPrefab, dropPosition, Quaternion.identity);
+        }
+
+        Debug.Log($"{numberOfCoins} coins dropped by Cargo Plane!");
+    }
 }

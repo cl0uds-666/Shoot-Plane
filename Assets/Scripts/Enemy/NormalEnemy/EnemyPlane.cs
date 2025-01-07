@@ -12,14 +12,17 @@ public class EnemyPlane : MonoBehaviour
     [SerializeField] private float loopDelay = 2f; // Time to wait before turning around
     [SerializeField] private float ascentSpeed = 5f; // Speed of ascent
     [SerializeField] private float noseUpAngle = 15f; // Angle for nose-up during ascent
+    [SerializeField] private float exitDistance = 200f; // Distance to travel forward before being destroyed
 
     private Transform player; // Reference to the player
     private Vector3 flyOverTarget; // Target position above the player
     private int attackCyclesCompleted = 0; // Counter for attack cycles
     private bool isReturning = false; // Whether the plane is returning to attack again
     private bool isAscending = false; // Whether the plane is ascending to Y=46
-    private Quaternion returnRotation; // Rotation for returning to attack
     private bool isExiting = false; // Whether the plane is exiting permanently
+    private Quaternion returnRotation; // Rotation for returning to attack
+    private Vector3 exitTarget; // Target position for the exit
+
     private float dropTimer;
 
     void Start()
@@ -30,7 +33,11 @@ public class EnemyPlane : MonoBehaviour
 
     void Update()
     {
-        if (isExiting) return; // If the plane is exiting, stop processing further
+        if (isExiting)
+        {
+            HandleExit();
+            return;
+        }
 
         if (isAscending)
         {
@@ -132,8 +139,20 @@ public class EnemyPlane : MonoBehaviour
     {
         isExiting = true;
 
-        Vector3 forwardDirection = transform.forward;
-        forwardDirection.y = 0;
-        returnRotation = Quaternion.LookRotation(forwardDirection);
+        // Set the exit target position far ahead of the plane
+        exitTarget = transform.position + transform.forward * exitDistance;
+        exitTarget.y = 46f; // Maintain height at Y=46
+    }
+
+    private void HandleExit()
+    {
+        // Move toward the exit target
+        transform.position = Vector3.MoveTowards(transform.position, exitTarget, speed * Time.deltaTime);
+
+        // Check if the plane has reached the exit target
+        if (Vector3.Distance(transform.position, exitTarget) < 1f)
+        {
+            Destroy(gameObject); // Destroy the plane
+        }
     }
 }

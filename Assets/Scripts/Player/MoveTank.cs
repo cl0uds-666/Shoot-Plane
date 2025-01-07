@@ -10,6 +10,9 @@ public class MoveTank : MonoBehaviour
     [SerializeField] private GameObject[] rightWheels;
     [SerializeField] private float wheelRotateSpeed = 200.0f;
     [SerializeField] private Transform turretTransform; // Reference to the turret for movement alignment
+    [SerializeField] private float uprightForce = 10f; // Force to keep the tank upright
+    [SerializeField] private float tiltThreshold = 25f; // Maximum tilt angle before forced correction
+    [SerializeField] private float correctionSpeed = 2f; // Speed at which the tank resets to upright
 
     private Rigidbody rb;
     private float moveInput;
@@ -18,6 +21,10 @@ public class MoveTank : MonoBehaviour
     void Start()
     {
         rb = GetComponent<Rigidbody>();
+        if (rb == null)
+        {
+            Debug.LogError("Rigidbody component is missing from the tank!");
+        }
     }
 
     void Update()
@@ -37,6 +44,9 @@ public class MoveTank : MonoBehaviour
 
         // Rotate the tank
         RotateTankObj(turnInput);
+
+        // Enforce upright orientation
+        EnforceUpright();
     }
 
     void MoveTankObj(float input)
@@ -80,6 +90,22 @@ public class MoveTank : MonoBehaviour
             {
                 wheel.transform.Rotate(wheelRotation + rotateInput * wheelRotateSpeed * Time.deltaTime, 0.0f, 0.0f);
             }
+        }
+    }
+
+    void EnforceUpright()
+    {
+        // Check tilt angle
+        float tiltAngle = Vector3.Angle(Vector3.up, transform.up);
+
+        if (tiltAngle > tiltThreshold)
+        {
+            // If the tilt exceeds the threshold, smoothly reset rotation to upright
+            Quaternion targetRotation = Quaternion.Euler(0, transform.eulerAngles.y, 0);
+            transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, correctionSpeed * Time.fixedDeltaTime);
+
+            // dampen angular velocity to reduce wobble
+            rb.angularVelocity = Vector3.zero;
         }
     }
 }

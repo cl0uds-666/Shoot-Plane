@@ -24,5 +24,11 @@ public class PlayerHealth : MonoBehaviour
     private void Die()
     {
         Debug.Log("Player died!");
+        FindObjectOfType<GameManager>().PlayerDied(); // Notify the GameManager
+    }
+
+    public int GetHealth()
+    {
+        return currentHealth;
     }
 }

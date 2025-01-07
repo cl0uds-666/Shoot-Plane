@@ -1,5 +1,6 @@
 using UnityEngine;
 using EZCameraShake;
+using UnityEngine.SceneManagement;
 
 public class Bomb : MonoBehaviour
 {
@@ -9,11 +10,14 @@ public class Bomb : MonoBehaviour
     [SerializeField] private GameObject explosionEffect; // Explosion VFX prefab
     [SerializeField] private float lifetime = 5f; // Time before the bomb is destroyed
 
-
     private bool hasExploded = false;
+    private bool isMainMenu = false;
 
     void Start()
     {
+        // Determine if the current scene is the MainMenu
+        isMainMenu = SceneManager.GetActiveScene().name == "MainMenu";
+
         // Destroy the bomb after a certain time
         Destroy(gameObject, lifetime);
     }
@@ -52,7 +56,10 @@ public class Bomb : MonoBehaviour
             PlayerHealth player = nearbyObject.GetComponent<PlayerHealth>();
             if (player != null)
             {
-                CameraShaker.Instance.ShakeOnce(20f, 20f, .1f, 1f);
+                if (!isMainMenu) // Only apply camera shake in gameplay scenes
+                {
+                    CameraShaker.Instance.ShakeOnce(20f, 20f, .1f, 1f);
+                }
 
                 // Calculate damage based on distance
                 float distance = Vector3.Distance(transform.position, player.transform.position);
